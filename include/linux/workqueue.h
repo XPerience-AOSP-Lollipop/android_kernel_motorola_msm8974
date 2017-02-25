@@ -141,6 +141,8 @@ struct execute_work {
 #define DECLARE_DEFERRED_WORK(n, f)				\
 	struct delayed_work n = __DEFERRED_WORK_INITIALIZER(n, f)
 
+#define DECLARE_DEFERRABLE_WORK(n, f)                           \
+	struct delayed_work n = __DEFERRABLE_WORK_INITIALIZER(n, f)
 /*
  * initialize a work item's function pointer
  */
@@ -221,6 +223,14 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
 		init_timer_deferrable(&(_work)->timer);		\
 	} while (0)
 
+#define INIT_DEFERRABLE_WORK(_work, _func) 			\
+	do {							\
+		INIT_WORK(&(_work)->work, (_func));		\
+		init_timer_deferrable(&(_work)->timer); 	\
+	} while (0)
+
+ #define INIT_DEFERRABLE_WORK_ONSTACK(_work, _func)                      \
+         __INIT_DELAYED_WORK_ONSTACK(_work, _func, TIMER_DEFERRABLE)
 /**
  * work_pending - Find out whether a work item is currently pending
  * @work: The work item in question
